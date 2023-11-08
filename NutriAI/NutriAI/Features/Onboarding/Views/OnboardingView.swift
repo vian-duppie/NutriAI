@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingView: View {
     @State var animate: Bool = false
     @State var animateSpring: Bool = false
+    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
     
     @State var onboardingIndex: Int = 0
     
@@ -64,7 +65,12 @@ struct OnboardingView: View {
                     
                     Button(action: {
                         withAnimation(.easeInOut(duration: 1)) {
-                            onboardingIndex += 1
+                            if onboardingIndex == 1 {
+                                isOnboardingCompleted = true
+                            } else {
+                                onboardingIndex += 1
+                            }
+                            
                         }
                     }, label: {
                         ZStack(alignment: .center){
@@ -88,12 +94,14 @@ struct OnboardingView: View {
             }
             .ignoresSafeArea(.all, edges: .bottom)
             .onAppear {
-                withAnimation(.interpolatingSpring(stiffness: 100, damping: 7, initialVelocity: 0.1)) {
-                    animateSpring = true
-                }
-                
-                withAnimation(.easeInOut(duration: 1)) {
-                    animate = true
+                DispatchQueue.main.async {
+                    withAnimation(.interpolatingSpring(stiffness: 100, damping: 7, initialVelocity: 0.1)) {
+                        animateSpring = true
+                    }
+                    
+                    withAnimation(.easeInOut(duration: 1)) {
+                        animate = true
+                    }
                 }
             }
 
